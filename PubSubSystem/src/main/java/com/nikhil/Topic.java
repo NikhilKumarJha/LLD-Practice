@@ -1,14 +1,14 @@
 package com.nikhil;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Topic {
     private final String name;
     private final BlockingQueue<Message> messageBlockingQueue = new LinkedBlockingQueue<>(100);
-    private final List<Subscriber> subscribers = new ArrayList<>();
+    private final List<Subscriber> subscribers = new CopyOnWriteArrayList<>();
 
     public Topic(String topicName) {
         this.name = topicName;

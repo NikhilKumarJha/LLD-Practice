@@ -28,7 +28,7 @@ public class Broker {
 
     public void createTopic(String topicName) {
         Topic topic = new Topic(topicName);
-        topicNameVsTopic.put(topic.getName(), topic);
+        topicNameVsTopic.putIfAbsent(topic.getName(), topic);
     }
 
     public Topic getTopic(String topicName) {
