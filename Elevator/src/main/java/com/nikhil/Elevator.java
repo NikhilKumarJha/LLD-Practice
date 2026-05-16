@@ -1,5 +1,7 @@
 package com.nikhil;
 
+import com.sun.net.httpserver.Request;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,26 +19,51 @@ public class Elevator {
             int distance = Integer.MAX_VALUE;
             ElevatorRequest nearest = null;
             for (ElevatorRequest request : requests) {
-                if (Math.abs(request.getFloor() - currentFloor) < distance){
+                if (Math.abs(request.getFloor() - currentFloor) < distance) {
                     distance = Math.abs(request.getFloor() - currentFloor);
                     direction = request.getFloor() > currentFloor ? ElevatorDirection.UP : ElevatorDirection.DOWN;
                     nearest = request;
                 }
             }
-            if (nearest ==null){
+            if (nearest == null) {
                 nearest = requests.iterator().next();
             }
             direction = nearest.getFloor() > currentFloor ? ElevatorDirection.UP : ElevatorDirection.DOWN;
+        }
+        RequestDirection requestDirection = direction == ElevatorDirection.UP ? RequestDirection.PICKUP_UP : RequestDirection.PICKUP_DOWN;
+        ElevatorRequest pickupRequest = new ElevatorRequest(currentFloor, requestDirection);
+        ElevatorRequest destinationRequest = new ElevatorRequest(currentFloor, RequestDirection.DESTINATION);
+        if (requests.contains(pickupRequest)) {
+            requests.remove(pickupRequest);
+        }
+        if (requests.contains(destinationRequest)) {
+            requests.remove(destinationRequest);
+        }
+        if (requests.isEmpty()) {
+            direction = ElevatorDirection.IDLE;
+            return;
+        }
+        if (!requestAhead(direction)){
+            direction = direction == ElevatorDirection.UP ? ElevatorDirection.DOWN : ElevatorDirection.UP;
+            return;
         }
         if (direction == ElevatorDirection.UP) {
             currentFloor++;
         } else {
             currentFloor--;
         }
-        requests.removeIf(request -> request.getFloor() == currentFloor);
-        if (requests.isEmpty()) {
-            direction = ElevatorDirection.IDLE;
+    }
+
+    private boolean requestAhead(ElevatorDirection direction) {
+        for (ElevatorRequest request : requests) {
+            if (direction == ElevatorDirection.UP && request.getFloor() > currentFloor) {
+                return true;
+            }
+            if (direction == ElevatorDirection.DOWN && request.getFloor() < currentFloor) {
+                return true;
+            }
         }
+        return false;
     }
 
     public boolean addRequest(ElevatorRequest request) {
