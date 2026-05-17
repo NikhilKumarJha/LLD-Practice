@@ -1,6 +1,6 @@
 package com.nikhil;
 
 public enum DriverStatus {
-    DRIVING,
+    RIDING,
     IDLE
 }
